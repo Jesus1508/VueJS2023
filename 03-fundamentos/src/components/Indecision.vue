@@ -37,21 +37,31 @@
         
         methods: {
             async getAnswer(){
+                try{
+                    this.answer = 'Pensando...'
+    
+                    const { answer, image } = await fetch('https://yesno.wtf/api')
+                                        .then( resp => resp.json() )
+                    
+                    this.answer = (answer === 'yes') ? 'Si!' : 'No!'
+                    this.img = image
 
-                this.answer = 'Pensando...'
-
-                const { answer, image } = await fetch('https://yesno.wtf/api')
-                                    .then( resp => resp.json() )
-                
-                this.answer = (answer === 'yes') ? 'Si!' : 'No!'
-                this.img = image
+                }catch(error){
+                    console.log('IndecisionComponent: ', error)
+                    this.answer = 'No se pudo cargar del API'
+                    this.img    = null
+                }
             }
         },
 
         watch: {
             question( value, oldValue){
                 this.isValidQuestion = false
+
+                console.log({value})
                 if( !value.includes('?') ) return
+
+                console.log({value})
                 //Realizar petición http
                 this.isValidQuestion = true
                 this.getAnswer()
